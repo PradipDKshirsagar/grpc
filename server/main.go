@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	"creativitygrpc/creativity"
-	"creativitygrpc/creativity_server/db"
-	"creativitygrpc/creativity_server/user"
 	"fmt"
+	"grpc/server/db"
+	"grpc/server/proto"
+	"grpc/server/user"
 	"log"
 	"net"
 	"net/http"
@@ -26,12 +26,12 @@ func init() {
 
 type server struct{}
 
-func (s *server) GetUser(ctx context.Context, in *creativity.HelloRequest) (*creativity.HelloReply, error) {
+func (s *server) GetUser(ctx context.Context, in *proto.UserRequest) (*proto.UserResponse, error) {
 	log.Printf("Received: %v", in.Id)
 	var us user.User
 	us, err := user.ReadService(in.Id)
 	msg := fmt.Sprintf("%v", us)
-	return &creativity.HelloReply{Message: msg}, err
+	return &proto.UserResponse{Message: msg}, err
 }
 
 func main() {
@@ -45,7 +45,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	creativity.RegisterGreeterServer(s, &server{})
+	proto.RegisterUserInfoServer(s, &server{})
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}

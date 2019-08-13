@@ -1,7 +1,7 @@
 package user
 
 import (
-	"creativitygrpc/creativity_server/db"
+	"grpc/server/db"
 	"database/sql"
 	"errors"
 	"fmt"

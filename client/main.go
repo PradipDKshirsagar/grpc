@@ -24,14 +24,14 @@ import (
 	"os"
 	"time"
 
-	pb "creativitygrpc/creativity"
+	"grpc/client/proto"
 
 	"google.golang.org/grpc"
 )
 
 const (
 	address   = "localhost:8080"
-	defaultId = "30"
+	defaultId = "1"
 )
 
 func main() {
@@ -41,7 +41,7 @@ func main() {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewGreeterClient(conn)
+	c := proto.NewUserInfoClient(conn)
 
 	// Contact the server and print out its response.
 	id := defaultId
@@ -50,9 +50,10 @@ func main() {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.GetUser(ctx, &pb.HelloRequest{Id: id})
+	r, err := c.GetUser(ctx, &proto.UserRequest{Id: id})
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		log.Fatalf("could not find: %v", err)
+	} else {
+		log.Printf("Info: %s", r.Message)
 	}
-	log.Printf("Greeting: %s", r.Message)
 }
